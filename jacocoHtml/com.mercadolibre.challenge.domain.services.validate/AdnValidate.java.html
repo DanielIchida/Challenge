@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdnValidate.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">challenge</a> &gt; <a href="index.source.html" class="el_package">com.mercadolibre.challenge.domain.services.validate</a> &gt; <span class="el_source">AdnValidate.java</span></div><h1>AdnValidate.java</h1><pre class="source lang-java linenums">package com.mercadolibre.challenge.domain.services.validate;
+
+
+<span class="fc" id="L4">public class AdnValidate {</span>
+
+<span class="fc" id="L6">    char[] letters = {'T','C','G','A'};</span>
+
+    public boolean isMutant(String[] dna){
+<span class="fc" id="L9">        int patternCount = 0;</span>
+<span class="fc" id="L10">        char[][] convertDna = covertTwoDimensional(dna);</span>
+<span class="fc bfc" id="L11" title="All 2 branches covered.">        for (int l = 0 ; l &lt; letters.length ; l++) {</span>
+<span class="fc bfc" id="L12" title="All 2 branches covered.">            for (int i = 0; i &lt; convertDna.length; i++) {</span>
+<span class="fc bfc" id="L13" title="All 2 branches covered.">                for (int j = 0; j &lt; convertDna.length; j++) {</span>
+<span class="fc" id="L14">                    patternCount =  patternCount+ horizontalVerticalSearch(i,j,convertDna,letters[l],PositionEnum.HORIZONTAL);</span>
+<span class="fc" id="L15">                    patternCount = patternCount + horizontalVerticalSearch(i,j,convertDna,letters[l],PositionEnum.VERTICAL);</span>
+<span class="fc" id="L16">                    patternCount = patternCount + diagonalLeftRigthTopSearch(i,j,convertDna,letters[l],PositionEnum.LEFT);</span>
+<span class="fc" id="L17">                    patternCount = patternCount + diagonalLeftRigthTopSearch(i,((convertDna.length - 1) - j),convertDna,letters[l],PositionEnum.RIGHT);</span>
+<span class="fc" id="L18">                    patternCount = patternCount + diagonalLeftRightBottomSearch(((convertDna.length - 1) - i),j,convertDna,letters[l],PositionEnum.LEFT);</span>
+<span class="fc" id="L19">                    patternCount = patternCount + diagonalLeftRightBottomSearch(((convertDna.length - 1) - i),((convertDna.length - 1) - j),convertDna,letters[l],PositionEnum.RIGHT);</span>
+                }
+            }
+        }
+<span class="pc bpc" id="L23" title="1 of 2 branches missed.">        return patternCount &gt; 1;</span>
+    }
+
+    private char[][] covertTwoDimensional(String[] dna){
+<span class="fc" id="L27">        char[][] dna2 = new char[dna.length][dna.length];</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">        for (int i = 0; i &lt; dna.length; i++) {</span>
+<span class="fc" id="L29">            char[] lettersCurrent = dna[i].toCharArray();</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">            for (int j = 0; j &lt; lettersCurrent.length; j++) {</span>
+<span class="fc" id="L31">                dna2[i][j] = lettersCurrent[j];</span>
+            }
+        }
+<span class="fc" id="L34">        return dna2;</span>
+    }
+    //TODO N NUMERO DE PATRONES DE MANERA HORIZONTAL Y VERTICAL
+    private int horizontalVerticalSearch(int i , int j, char[][] letters,char letter,PositionEnum positionEnum){
+<span class="fc" id="L38">        int chainsNumber = 0;</span>
+<span class="fc" id="L39">        int letterCount = 0;</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        if(letters[i][j] == letter) {</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">            if(positionEnum == PositionEnum.HORIZONTAL) {</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">                for (int c = j; c &lt; 4; c++) {</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">                    if (letters[i][c] == letter) {</span>
+<span class="fc" id="L44">                        letterCount++;</span>
+                    } else {
+                        break;
+                    }
+                }
+            }else{
+<span class="fc bfc" id="L50" title="All 2 branches covered.">                for(int c = i ; c &lt; 4 ; c++){</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">                    if(letters[c][j] == letter){</span>
+<span class="fc" id="L52">                        letterCount++;</span>
+                    }else{
+                        break;
+                    }
+                }
+            }
+<span class="fc bfc" id="L58" title="All 2 branches covered.">            if(letterCount &gt; 3){</span>
+<span class="fc" id="L59">                chainsNumber++;</span>
+            }
+        }
+<span class="fc" id="L62">        return chainsNumber;</span>
+    }
+
+    //TODO N NUMERO DE PATRONES DE MANERA DERECHA A IZQUIERDA HACIA ARRIBA
+    public static int diagonalLeftRigthTopSearch(int i , int j, char[][] letters, char letter, PositionEnum positionEnum){
+<span class="fc" id="L67">        int chainsNumber = 0;</span>
+<span class="fc" id="L68">        int letterCount = 0;</span>
+
+<span class="fc" id="L70">        int numberPosicionValidate = 4;</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if (positionEnum == PositionEnum.RIGHT) {</span>
+<span class="fc" id="L72">            numberPosicionValidate = 5;</span>
+        }
+
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        if(letters[i][j] == letter) {</span>
+<span class="fc" id="L76">            int countColum = i;</span>
+<span class="fc" id="L77">            int size = letters.length - 1;</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">            if(countColum == size){</span>
+<span class="fc" id="L79">                return 0;</span>
+            }
+<span class="fc bfc" id="L81" title="All 2 branches covered.">            for(int c = j; c &lt; numberPosicionValidate ; c++){</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">                if(countColum &gt; size){</span>
+<span class="fc" id="L83">                    break;</span>
+                }
+<span class="fc bfc" id="L85" title="All 2 branches covered.">                if(letters[countColum][c] == letter){</span>
+<span class="fc" id="L86">                    countColum = countColum + 1;</span>
+<span class="fc" id="L87">                    letterCount++;</span>
+                }else{
+                    break;
+                }
+            }
+        }
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        if(letterCount &gt; 3){</span>
+<span class="fc" id="L94">            chainsNumber++;</span>
+        }
+<span class="fc" id="L96">        return chainsNumber;</span>
+    }
+
+    //TODO N NUMERO DE PATRONES DE MANERA DERECHA A IZQUIERDA HACIA ABAJO
+    public static int diagonalLeftRightBottomSearch(int i , int j, char[][] letters,char letter,PositionEnum positionEnum){
+<span class="fc" id="L101">        int chainsNumber = 0;</span>
+<span class="fc" id="L102">        int letterCount = 0;</span>
+<span class="fc" id="L103">        int numberPosicionValidate = 4;</span>
+<span class="fc" id="L104">        boolean posValidateLeft = true;</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">        if(positionEnum == PositionEnum.RIGHT){</span>
+<span class="fc" id="L106">            numberPosicionValidate = 6;</span>
+<span class="fc" id="L107">            posValidateLeft = false;</span>
+        }
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        if(letters[i][j] == letter) {</span>
+<span class="fc" id="L110">            int countColum = i;</span>
+<span class="fc" id="L111">            int countRow = j;</span>
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">            if(countColum &lt; 0){</span>
+<span class="nc" id="L113">                return 0;</span>
+            }
+<span class="fc bfc" id="L115" title="All 2 branches covered.">            for(int c = countRow; c &lt; numberPosicionValidate ; c++){</span>
+<span class="fc" id="L116">                int size = letters.length - 1;</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">                if(posValidateLeft){</span>
+<span class="pc bpc" id="L118" title="1 of 4 branches missed.">                    if(countColum &lt; 0 || countColum &gt; size){</span>
+<span class="fc" id="L119">                        break;</span>
+                    }
+                }else{
+<span class="fc bfc" id="L122" title="All 2 branches covered.">                    if(countColum &lt; 0){</span>
+<span class="fc" id="L123">                        break;</span>
+                    }
+                }
+<span class="fc bfc" id="L126" title="All 2 branches covered.">                if(letters[countColum][c] == letter){</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">                    if(posValidateLeft){</span>
+<span class="fc" id="L128">                        countRow = countRow - 1;</span>
+<span class="fc" id="L129">                        countColum = countColum + 1;</span>
+                    }else{
+<span class="fc" id="L131">                        countRow = countRow + 1;</span>
+<span class="fc" id="L132">                        countColum = countColum - 1;</span>
+                    }
+<span class="fc" id="L134">                    letterCount = letterCount + 1;</span>
+                }else{
+                    break;
+                }
+            }
+        }
+<span class="fc bfc" id="L140" title="All 2 branches covered.">        if(letterCount &gt; 3){</span>
+<span class="fc" id="L141">            chainsNumber++;</span>
+        }
+<span class="fc" id="L143">        return chainsNumber;</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
