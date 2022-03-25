@@ -13,11 +13,10 @@ public class SaveDna {
         this.validateAdn = false;
     }
 
-    public boolean execute(String[] dna) throws InvalidStructureDnaException {
+    public void execute(String[] dna) throws InvalidStructureDnaException {
         this.dnaService.saveDna(dna, isMutant -> {
             this.validateAdn = isMutant;
         });
-        return this.validateAdn;
     }
 
     public boolean isValidateAdn() {

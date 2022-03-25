@@ -1,5 +1,6 @@
 package com.mercadolibre.challenge.infraestructure.rest.controllers;
 
+import com.mercadolibre.challenge.application.usescases.ListDna;
 import com.mercadolibre.challenge.application.usescases.SaveDna;
 import com.mercadolibre.challenge.application.usescases.StatsDna;
 import com.mercadolibre.challenge.domain.exceptions.InvalidStructureDnaException;
@@ -23,11 +24,14 @@ public class AdnController {
     @Autowired
     private StatsDna statsDna;
 
+    @Autowired
+    private ListDna listDna;
+
     @PostMapping("/mutant")
     public ResponseEntity<ValidateDnaDto> mutant(@RequestBody RequestDna request) throws InvalidStructureDnaException {
-        boolean validate = saveDna.execute(request.getDna());
-        ValidateDnaDto response = new ValidateDnaDto(validate);
-        if(validate){
+        saveDna.execute(request.getDna());
+        ValidateDnaDto response = new ValidateDnaDto(saveDna.isValidateAdn());
+        if(response.isMutant()){
            return new ResponseEntity<>(response, HttpStatus.OK);
         }else{
            return new ResponseEntity<>(response,HttpStatus.FORBIDDEN);
@@ -43,6 +47,12 @@ public class AdnController {
                   statsDna.getRatio()
           );
           return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @GetMapping("/dnas")
+    public ResponseEntity<String[]> list(){
+        listDna.execute();
+        return new ResponseEntity(listDna.getListDna(),HttpStatus.OK);
     }
 
 }

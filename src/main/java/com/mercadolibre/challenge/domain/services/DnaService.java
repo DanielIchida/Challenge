@@ -44,6 +44,11 @@ public class DnaService {
         response.onCallback((int)human,(int)mutant,ratio);
     }
 
+    public void listDna(HumanContract.OnResponseListDna response){
+        List<String> dnas = dnaRepository.allDna();
+        response.onCallBack(dnas);
+    }
+
     private boolean validateIsMutant(Dna dna){
         return dna.isMutant();
     }

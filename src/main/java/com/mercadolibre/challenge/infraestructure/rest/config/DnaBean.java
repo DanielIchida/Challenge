@@ -1,6 +1,7 @@
 package com.mercadolibre.challenge.infraestructure.rest.config;
 
 import com.mercadolibre.challenge.application.repositories.DnaRepository;
+import com.mercadolibre.challenge.application.usescases.ListDna;
 import com.mercadolibre.challenge.application.usescases.SaveDna;
 import com.mercadolibre.challenge.application.usescases.StatsDna;
 
@@ -24,6 +25,11 @@ public class DnaBean {
     @Bean
     public StatsDna statsDna(DnaService service){
         return new StatsDna(service);
+    }
+
+    @Bean
+    public ListDna listDna(DnaService service){
+        return new ListDna(service);
     }
 
 }
